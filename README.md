@@ -42,10 +42,6 @@ Event Finder is a web application that allows users to discover, host, and book 
 5. **Open your browser and go to:**  
    [http://localhost:5000](http://localhost:5000)
 
-## Screenshots
-
-_Add screenshots of your app here (optional)._
-
 ## License
 
 This project is licensed under the MIT License. 
