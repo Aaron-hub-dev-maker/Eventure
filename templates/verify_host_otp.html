@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Event Hosting | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div style="max-width:400px;margin:60px auto;background:#fff;padding:32px 28px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+        <h2 style="color:#1976d2;text-align:center;margin-bottom:18px;"><i class="fa fa-shield-alt"></i> Verify Event Hosting</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div style="background:{% if category=='success' %}#e8f5e9{% elif category=='danger' %}#ffebee{% else %}#e3f2fd{% endif %};color:{% if category=='success' %}#388e3c{% elif category=='danger' %}#c62828{% else %}#1976d2{% endif %};border-left:5px solid {% if category=='success' %}#4CAF50{% elif category=='danger' %}#f44336{% else %}#00bcd4{% endif %};padding:10px 16px;border-radius:4px;margin-bottom:8px;font-weight:600;">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <form method="POST" style="display:flex;flex-direction:column;align-items:center;">
+            <label for="otp" style="margin-bottom:6px;text-align:center;width:100%;max-width:240px;">Enter Verification Code</label>
+            <input type="text" name="otp" id="otp" class="form-control" required style="margin-bottom:16px;width:100%;max-width:240px;">
+            <button type="submit" class="btn" style="width:100%;max-width:240px;background:#1976d2;">Verify & Host Event</button>
+        </form>
+        <form method="POST" style="margin-top:10px;display:flex;justify-content:center;">
+            <input type="hidden" name="resend_otp" value="1">
+            {% if seconds_left > 0 %}
+                <button type="submit" class="btn" style="background:none;color:#aaa;text-decoration:underline;border:none;box-shadow:none;cursor:not-allowed;padding:0;" disabled>Resend OTP (wait {{ seconds_left }}s)</button>
+            {% else %}
+                <button type="submit" class="btn" style="background:none;color:#1976d2;text-decoration:underline;border:none;box-shadow:none;cursor:pointer;padding:0;">Resend OTP</button>
+            {% endif %}
+        </form>
+        <div style="text-align:center;margin-top:18px;">
+            <a href="{{ url_for('host') }}" style="color:#1976d2;text-decoration:underline;">Back to Host Form</a>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Program | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .referral-hero {
+            background: linear-gradient(90deg, #4CAF50 60%, #00bcd4 100%);
+            color: #fff;
+            padding: 44px 0 32px 0;
+            text-align: center;
+        }
+        .referral-content {
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 32px 28px 24px 28px;
+        }
+        body.dark-mode .referral-content {
+            background: var(--white) !important;
+            color: var(--text) !important;
+        }
+        .referral-content h2, .referral-content h3 {
+            color: #4CAF50;
+        }
+        body.dark-mode .referral-content h2, body.dark-mode .referral-content h3 {
+            color: #b6f5c2 !important;
+        }
+        .referral-link-box {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+        .referral-link-input {
+            flex: 1;
+            padding: 8px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+        .copy-btn {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .copy-btn:active {
+            background: #388E3C;
+        }
+        .reward-box {
+            background: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        body.dark-mode .reward-box {
+            background: #223b2a !important;
+            color: #b6f5c2 !important;
+            border-left: 5px solid #4CAF50 !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container">
+        <header>
+            <h2 style="font-size:2em;display:flex;align-items:center;gap:8px;">
+                <i class="fa-solid fa-calendar-days" style="color:#4CAF50;"></i>
+                <span class="eventure-logo-text">Eventure</span>
+            </h2>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/host">Host an Event</a>
+                <a href="/referrals">Referrals</a>
+                <a href="/FAQ">FAQ</a>
+                <a href="/contact">Contact</a>
+            </nav>
+            <button id="dark-mode-toggle" style="margin-left:18px;padding:6px 16px;border-radius:20px;border:none;background:#23272a;color:#fff;cursor:pointer;font-weight:600;">🌙 Dark Mode</button>
+            {% if current_user.is_authenticated %}
+                <span style="margin-left:18px;font-weight:600;color:#4CAF50;">Welcome, {{ current_user.username }}!</span>
+                <a href="/logout" class="btn" style="margin-left:12px;background:#f44336;">Logout</a>
+            {% else %}
+                <a href="/login" class="btn" style="margin-left:18px;">Login</a>
+                <a href="/register" class="btn" style="margin-left:8px;background:#00bcd4;">Register</a>
+            {% endif %}
+        </header>
+    </div>
+
+    <section class="referral-hero">
+        <h1 style="font-size:2.2em;font-weight:700;margin-bottom:10px;">Refer & Earn with Eventure</h1>
+        <p style="font-size:1.15em;max-width:500px;margin:0 auto;">Invite your friends to Eventure and earn exciting rewards for every successful referral.</p>
+    </section>
+
+    <div class="referral-content">
+        <div class="reward-box">
+            <h2>Active Referral Program</h2>
+            <p><strong>Get ₹100 for every friend who hosts their first event!</strong></p>
+            <ul>
+                <li>Share your unique referral link below.</li>
+                <li>Your friend signs up and hosts their first event.</li>
+                <li>You both receive ₹100 Eventure credits!</li>
+            </ul>
+        </div>
+        <h3>Your Referral Link</h3>
+        <div class="referral-link-box">
+            <input type="text" class="referral-link-input" id="referral-link" value="https://eventure.com/signup?ref=YOURCODE" readonly>
+            <button class="copy-btn" onclick="copyReferralLink()">Copy</button>
+        </div>
+        <p style="font-size: 0.95em; color: #555;">Share your link with friends via WhatsApp, Email, or Social Media!</p>
+        <h3 style="margin-top:28px;">How It Works</h3>
+        <ol>
+            <li><strong>Share:</strong> Copy and share your referral link with friends.</li>
+            <li><strong>Sign Up:</strong> Your friend joins Eventure using your link.</li>
+            <li><strong>Host:</strong> They host their first event on Eventure.</li>
+            <li><strong>Earn:</strong> You both receive ₹100 Eventure credits, redeemable for event perks!</li>
+        </ol>
+        <h3 style="margin-top:28px;">Track Your Rewards</h3>
+        <p>Log in to your account to see your referral status and earned credits.</p>
+    </div>
+
+    <script>
+        function copyReferralLink() {
+            var copyText = document.getElementById("referral-link");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand("copy");
+            alert("Referral link copied to clipboard!");
+        }
+    </script>
+
+    <script>
+        // Robust dark mode toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkToggleBtn = document.getElementById('dark-mode-toggle');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    darkToggleBtn.textContent = '☀️ Light Mode';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    darkToggleBtn.textContent = '🌙 Dark Mode';
+                }
+            }
+            const darkPref = localStorage.getItem('darkMode') === 'true';
+            setDarkMode(darkPref);
+            darkToggleBtn.onclick = function() {
+                const isDark = !document.body.classList.contains('dark-mode');
+                setDarkMode(isDark);
+                localStorage.setItem('darkMode', isDark);
+            };
+        });
+    </script>
+
+    <footer>
+        <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="font-size:1.1em;font-weight:600;letter-spacing:1px;">Eventure</div>
+            <div style="font-size:0.98em;">&copy; 2024 Eventure. All rights reserved.</div>
+            <div style="font-size:1.3em;">
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

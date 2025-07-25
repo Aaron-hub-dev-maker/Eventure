@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .auth-hero {
+            background: linear-gradient(90deg, #4CAF50 60%, #00bcd4 100%);
+            color: #fff;
+            padding: 44px 0 32px 0;
+            text-align: center;
+        }
+        .auth-form-container {
+            max-width: 400px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 32px 28px 24px 28px;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align:center;margin-top:36px;margin-bottom:18px;">
+        <h2 style="font-size:2em;display:flex;align-items:center;gap:8px;">
+            <i class="fa-solid fa-calendar-days" style="color:#4CAF50;"></i>
+            <span class="eventure-logo-text">Eventure</span>
+        </h2>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="max-width:500px;margin:18px auto 0 auto;">
+          {% for category, message in messages %}
+            <div style="background:{% if category=='success' %}#e8f5e9{% elif category=='danger' %}#ffebee{% else %}#e3f2fd{% endif %};color:{% if category=='success' %}#388e3c{% elif category=='danger' %}#c62828{% else %}#1976d2{% endif %};border-left:5px solid {% if category=='success' %}#4CAF50{% elif category=='danger' %}#f44336{% else %}#00bcd4{% endif %};padding:10px 16px;border-radius:4px;margin-bottom:8px;font-weight:600;">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="auth-hero">
+        <h1 style="font-size:2.2em;font-weight:700;margin-bottom:10px;">Create Your Account</h1>
+        <p style="font-size:1.15em;max-width:500px;margin:0 auto;">Join Eventure to host and discover amazing events!</p>
+    </section>
+
+    <div class="auth-form-container">
+        <form method="POST" action="" style="display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" required>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required pattern="[0-9]{10,15}">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="g-recaptcha" data-sitekey="6LcVrIwrAAAAAHoYGM2gsGPq6iyVJcgLvteNZuLq" style="margin-bottom:16px;"></div>
+            <button type="submit" class="btn" style="width:100%;margin-top:10px;">Register</button>
+        </form>
+        <div style="text-align:center;font-size:0.98em;margin-top:18px;">
+            Already have an account? <a href="/login" style="color:#4CAF50;">Login</a>
+        </div>
+    </div>
+
+    <footer>
+        <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="font-size:1.1em;font-weight:600;letter-spacing:1px;">Eventure</div>
+            <div style="font-size:0.98em;">&copy; 2024 Eventure. All rights reserved.</div>
+            <div style="font-size:1.3em;">
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script>
+// Robust dark mode toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const darkToggleBtn = document.getElementById('dark-mode-toggle');
+        function setDarkMode(on) {
+            if (on) {
+                document.body.classList.add('dark-mode');
+                darkToggleBtn.textContent = '☀️ Light Mode';
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkToggleBtn.textContent = '🌙 Dark Mode';
+            }
+        }
+        const darkPref = localStorage.getItem('darkMode') === 'true';
+        setDarkMode(darkPref);
+        darkToggleBtn.onclick = function() {
+            const isDark = !document.body.classList.contains('dark-mode');
+            setDarkMode(isDark);
+            localStorage.setItem('darkMode', isDark);
+        };
+    });
+</script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</body>
+</html> 

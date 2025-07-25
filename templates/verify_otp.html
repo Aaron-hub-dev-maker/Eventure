@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .auth-hero {
+            background: linear-gradient(90deg, #4CAF50 60%, #00bcd4 100%);
+            color: #fff;
+            padding: 44px 0 32px 0;
+            text-align: center;
+        }
+        .auth-form-container {
+            max-width: 400px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 32px 28px 24px 28px;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align:center;margin-top:36px;margin-bottom:18px;">
+        <span style="font-size:2em;font-weight:700;letter-spacing:1px;color:#4CAF50;display:flex;align-items:center;justify-content:center;gap:10px;">
+            <i class="fa-solid fa-calendar-days"></i> Eventure
+        </span>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="max-width:500px;margin:18px auto 0 auto;">
+          {% for category, message in messages %}
+            <div style="background:{% if category=='success' %}#e8f5e9{% elif category=='danger' %}#ffebee{% else %}#e3f2fd{% endif %};color:{% if category=='success' %}#388e3c{% elif category=='danger' %}#c62828{% else %}#1976d2{% endif %};border-left:5px solid {% if category=='success' %}#4CAF50{% elif category=='danger' %}#f44336{% else %}#00bcd4{% endif %};padding:10px 16px;border-radius:4px;margin-bottom:8px;font-weight:600;">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="auth-hero">
+        <h1 style="font-size:2.2em;font-weight:700;margin-bottom:10px;">OTP Verification</h1>
+        <p style="font-size:1.15em;max-width:500px;margin:0 auto;">Enter the OTP sent to your email to complete your registration.</p>
+    </section>
+
+    <div class="auth-form-container">
+        <form method="POST" style="display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="otp">Enter the OTP sent to your email:</label>
+                <input type="text" id="otp" name="otp" required maxlength="6" pattern="\d{6}">
+            </div>
+            <button type="submit" class="btn" style="width:100%;margin-top:10px;">Verify</button>
+        </form>
+        <div style="text-align:center;font-size:0.98em;margin-top:18px;">
+            <a href="/register" style="color:#00bcd4;">Back to Register</a> |
+            <a href="/" style="color:#00bcd4;">Home</a>
+        </div>
+    </div>
+
+    <footer>
+        <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="font-size:1.1em;font-weight:600;letter-spacing:1px;">Eventure</div>
+            <div style="font-size:0.98em;">&copy; 2024 Eventure. All rights reserved.</div>
+            <div style="font-size:1.3em;">
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .faq-hero {
+            background: linear-gradient(90deg, #4CAF50 60%, #00bcd4 100%);
+            color: #fff;
+            padding: 44px 0 32px 0;
+            text-align: center;
+        }
+        .faq-section {
+            max-width: 700px;
+            margin: 32px auto 40px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            padding: 32px 24px 24px 24px;
+        }
+        body.dark-mode .faq-section {
+            background: var(--white) !important;
+            color: var(--text) !important;
+        }
+        .faq-section h2, .faq-section h3 {
+            color: #4CAF50;
+        }
+        body.dark-mode .faq-section h2, body.dark-mode .faq-section h3 {
+            color: #b6f5c2 !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container">
+        <header>
+            <h2 style="font-size:2em;display:flex;align-items:center;gap:8px;">
+                <i class="fa-solid fa-calendar-days" style="color:#4CAF50;"></i>
+                <span class="eventure-logo-text">Eventure</span>
+            </h2>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/host">Host an Event</a>
+                <a href="/referrals">Referrals</a>
+                <a href="/FAQ">FAQ</a>
+                <a href="/contact">Contact</a>
+            </nav>
+            <button id="dark-mode-toggle" style="margin-left:18px;padding:6px 16px;border-radius:20px;border:none;background:#23272a;color:#fff;cursor:pointer;font-weight:600;">🌙 Dark Mode</button>
+            {% if current_user.is_authenticated %}
+                <span style="margin-left:18px;font-weight:600;color:#4CAF50;">Welcome, {{ current_user.username }}!</span>
+                <a href="/logout" class="btn" style="margin-left:12px;background:#f44336;">Logout</a>
+            {% else %}
+                <a href="/login" class="btn" style="margin-left:18px;">Login</a>
+                <a href="/register" class="btn" style="margin-left:8px;background:#00bcd4;">Register</a>
+            {% endif %}
+        </header>
+    </div>
+
+    <section class="faq-hero">
+        <h1 style="font-size:2.2em;font-weight:700;margin-bottom:10px;">Frequently Asked Questions</h1>
+        <p style="font-size:1.15em;max-width:500px;margin:0 auto;">Find answers to the most common questions about our platform and services.</p>
+    </section>
+
+    <section class="faq-section">
+        <h2 style="text-align:center; color:#4CAF50; margin-bottom:18px;">Common Questions</h2>
+
+        <div class="faq-item">
+            <h3><span class="icon"><i class="fas fa-gift"></i></span>What is the referral program?<span class="toggle"><i class="fas fa-chevron-right"></i></span></h3>
+            <p>The referral program allows you to earn rewards by referring others to our platform. Share your unique referral link and earn rewards when your referrals complete the required actions.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3><span class="icon"><i class="fas fa-chart-line"></i></span>How can I track my referrals?<span class="toggle"><i class="fas fa-chevron-right"></i></span></h3>
+            <p>You can track your referrals through your account dashboard. It will show you the number of people you've referred and the rewards you've earned.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3><span class="icon"><i class="fas fa-users"></i></span>Are there any limitations on the number of referrals I can make?<span class="toggle"><i class="fas fa-chevron-right"></i></span></h3>
+            <p>No, there is no limit to the number of people you can refer. The more people you refer, the more rewards you can earn!</p>
+        </div>
+
+        <div class="faq-item">
+            <h3><span class="icon"><i class="fas fa-coins"></i></span>How do I redeem my rewards?<span class="toggle"><i class="fas fa-chevron-right"></i></span></h3>
+            <p>Once you’ve earned enough rewards, you can redeem them in your account settings. Choose from various options, such as gift cards or cash payouts.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3><span class="icon"><i class="fas fa-share-alt"></i></span>Can I share my referral link on social media?<span class="toggle"><i class="fas fa-chevron-right"></i></span></h3>
+            <p>Yes, you're encouraged to share your referral link on social media platforms to increase your chances of earning rewards.</p>
+        </div>
+
+        <div class="faq-contact">
+            <p><strong>Didn't find your answer?</strong><br>
+            <a href="/contact"><i class="fas fa-envelope"></i> Contact our support team</a> and we'll be happy to help!</p>
+        </div>
+    </section>
+
+    <script>
+        // Interactive FAQ accordion
+        document.querySelectorAll('.faq-item h3').forEach(item => {
+            item.addEventListener('click', function() {
+                this.parentElement.classList.toggle('active');
+            });
+        });
+    </script>
+
+    <script>
+        // Robust dark mode toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkToggleBtn = document.getElementById('dark-mode-toggle');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    darkToggleBtn.textContent = '☀️ Light Mode';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    darkToggleBtn.textContent = '🌙 Dark Mode';
+                }
+            }
+            const darkPref = localStorage.getItem('darkMode') === 'true';
+            setDarkMode(darkPref);
+            darkToggleBtn.onclick = function() {
+                const isDark = !document.body.classList.contains('dark-mode');
+                setDarkMode(isDark);
+                localStorage.setItem('darkMode', isDark);
+            };
+        });
+    </script>
+
+    <footer>
+        <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="font-size:1.1em;font-weight:600;letter-spacing:1px;">Eventure</div>
+            <div style="font-size:0.98em;">&copy; 2024 Eventure. All rights reserved.</div>
+            <div style="font-size:1.3em;">
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

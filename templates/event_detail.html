@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.Name }} | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container" style="max-width:600px;margin:40px auto;">
+        <h1>{{ event.Name }}</h1>
+        <p><strong>Date:</strong> {{ event.Date.strftime('%Y-%m-%d %H:%M') if event.Date else '' }}</p>
+        <p><strong>Place:</strong> {{ event.Place }}</p>
+        <p><strong>Distance:</strong> {{ event.Distance }} km</p>
+        <p><strong>Category:</strong> {{ event.Category }}</p>
+        <p><strong>Landmark:</strong> {{ event.Checkpoint }}</p>
+        <p><strong>Hosted by:</strong> {{ event.hosted_by }}</p>
+        {% if event.image %}
+            <img src="{{ url_for('static', filename='images/' + event.image) }}" alt="Event Image" style="max-width:100%;margin:20px 0;">
+        {% endif %}
+        <form action="{{ url_for('book_ticket', event_id=event._id|string) }}" method="POST">
+            <button type="submit" class="btn" style="width:100%;margin-top:20px;">Book Ticket</button>
+        </form>
+        <div style="margin-top:20px;">
+            <a href="/" style="color:#00bcd4;">&larr; Back to Events</a>
+        </div>
+    </div>
+</body>
+</html> 

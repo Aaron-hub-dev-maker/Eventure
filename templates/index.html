@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventure | Find Your Next Event</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="header-container">
+        <header>
+            <h2 style="font-size:2em;display:flex;align-items:center;gap:8px;">
+                <i class="fa-solid fa-calendar-days" style="color:#4CAF50;"></i>
+                <span class="eventure-logo-text">Eventure</span>
+            </h2>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/host">Host an Event</a>
+                <a href="/referrals">Referrals</a>
+                <a href="/FAQ">FAQ</a>
+                <a href="/contact">Contact</a>
+            </nav>
+            <button id="dark-mode-toggle" style="margin-left:18px;padding:6px 16px;border-radius:20px;border:none;background:#23272a;color:#fff;cursor:pointer;font-weight:600;">🌙 Dark Mode</button>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('profile') }}" style="margin-left:18px;font-weight:600;color:#4CAF50;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                    <i class="fa fa-user-circle"></i>Welcome, {{ current_user.username }}!
+                </a>
+                <a href="/logout" class="btn" style="margin-left:12px;background:#f44336;">Logout</a>
+            {% else %}
+                <a href="/login" class="btn" style="margin-left:18px;">Login</a>
+                <a href="/register" class="btn" style="margin-left:8px;background:#00bcd4;">Register</a>
+            {% endif %}
+        </header>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="max-width:500px;margin:18px auto 0 auto;">
+          {% for category, message in messages %}
+            <div style="background:{% if category=='success' %}#e8f5e9{% elif category=='danger' %}#ffebee{% else %}#e3f2fd{% endif %};color:{% if category=='success' %}#388e3c{% elif category=='danger' %}#c62828{% else %}#1976d2{% endif %};border-left:5px solid {% if category=='success' %}#4CAF50{% elif category=='danger' %}#f44336{% else %}#00bcd4{% endif %};padding:10px 16px;border-radius:4px;margin-bottom:8px;font-weight:600;">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 style="font-size:2.5em; font-weight:700; margin-bottom:10px; letter-spacing:1px;">Discover & Host Amazing Events</h1>
+        <p style="font-size:1.25em; margin-bottom:24px;">Find parties, concerts, open mics, and more near you. Or host your own and bring people together!</p>
+        <form style="display:flex;justify-content:center;gap:0;max-width:600px;margin:0 auto;">
+            <input type="text" id="search-bar" placeholder="Search for events..." value="{{ search_query or '' }}" onkeypress="if(event.key === 'Enter'){ window.location.href = '/?search=' + encodeURIComponent(this.value); return false; }" style="flex:1;">
+            <button type="button" class="btn" style="border-radius:0 30px 30px 0;" onclick="window.location.href = '/?search=' + encodeURIComponent(document.getElementById('search-bar').value);"><i class="fa fa-search"></i></button>
+        </form>
+    </section>
+
+    <!-- Advanced Filters -->
+    <div id="advanced-filter-container" style="text-align:center;margin-bottom:18px;">
+        <button id="toggle-filters" class="btn" style="min-width:140px;">🔎 Filters</button>
+        <div id="filter-panel" style="display:none;margin-top:16px;">
+            <form method="get" style="display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;">
+                <select name="place" style="min-width:120px;">
+                    <option value="">Landmarks</option>
+                    <option value="Kochi" {% if selected_place == 'Kochi' %}selected{% endif %}>Kochi</option>
+                    <option value="Bangalore" {% if selected_place == 'Bangalore' %}selected{% endif %}>Bangalore</option>
+                    <option value="Mumbai" {% if selected_place == 'Mumbai' %}selected{% endif %}>Mumbai</option>
+                    <option value="Delhi" {% if selected_place == 'Delhi' %}selected{% endif %}>Delhi</option>
+                </select>
+                <select name="distance" style="min-width:100px;">
+                    <option value="">Distance</option>
+                    <option value="5" {% if selected_distance == 5 %}selected{% endif %}>5 km</option>
+                    <option value="10" {% if selected_distance == 10 %}selected{% endif %}>10 km</option>
+                    <option value="20" {% if selected_distance == 20 %}selected{% endif %}>20 km</option>
+                    <option value="50" {% if selected_distance == 50 %}selected{% endif %}>50 km</option>
+                </select>
+                <select name="category" style="min-width:120px;">
+                    <option value="">Types</option>
+                    <option value="Party" {% if selected_category == 'Party' %}selected{% endif %}>Party</option>
+                    <option value="Concerts" {% if selected_category == 'Concerts' %}selected{% endif %}>Concerts</option>
+                    <option value="Stand Up" {% if selected_category == 'Stand Up' %}selected{% endif %}>Stand Up</option>
+                    <option value="Open Mic" {% if selected_category == 'Open Mic' %}selected{% endif %}>Open Mic</option>
+                    <option value="Other" {% if selected_category == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+                <input type="date" name="date" value="{{ selected_date or '' }}" style="min-width:140px;">
+                <input type="time" name="time" value="{{ selected_time or '' }}" style="min-width:120px;">
+                <button type="submit" class="btn" style="min-width:100px;">Filter</button>
+            </form>
+        </div>
+    </div>
+    <script>
+    // Advanced filter panel toggle
+    const toggleBtn = document.getElementById('toggle-filters');
+    const filterPanel = document.getElementById('filter-panel');
+    toggleBtn.onclick = function() {
+        if (filterPanel.style.display === 'none' || filterPanel.style.display === '') {
+            filterPanel.style.display = 'block';
+            toggleBtn.textContent = '✖ Close Filters';
+        } else {
+            filterPanel.style.display = 'none';
+            toggleBtn.textContent = '🔎 Filters';
+        }
+    };
+    </script>
+
+    {% if request.args.get('success') %}
+    <div class="success-message" style="color: #388e3c; background:#e8f5e9; border-left:5px solid #4CAF50; text-align: center; margin: 18px auto; max-width: 500px; border-radius:4px; padding:10px 0; font-weight:600;">
+        Event hosted successfully and added to the list!
+    </div>
+    {% endif %}
+
+    {% set categories = {
+        "Party": "Party",
+        "Concerts": "Concerts",
+        "Stand Up": "Stand Up",
+        "Open Mic": "Open Mic",
+        "Other": "Other"
+    } %}
+
+    <div id="events-container">
+        {% for key, label in categories.items() %}
+            {% set filtered = events | selectattr("Category", "equalto", key) | list %}
+            {% if filtered %}
+            <div class="event-section">
+                <h2><i class="fa fa-tag" style="color:#4CAF50;"></i> {{ label }}</h2>
+                <div class="event-row">
+                    {% for event in filtered %}
+                    <div class="event-card" data-event='{{ event | tojson | safe }}'>
+                        {% if event.image %}
+                            <img src="{{ url_for('static', filename='images/' ~ event.image) }}" alt="Event Image" loading="lazy" style="width:100%;height:120px;object-fit:cover;border-radius:7px;margin-bottom:15px;">
+                        {% else %}
+                            <div class="image-placeholder" style="display:flex;align-items:center;justify-content:center;font-size:2em;color:#bdbdbd;background:#e0e0e0;">
+                                <i class="fa fa-calendar-check"></i>
+                            </div>
+                        {% endif %}
+                        <h3>{{ event.Name|default('No Name') }}</h3>
+                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+                            <span style="background:#e8f5e9;color:#388e3c;padding:2px 10px;border-radius:12px;font-size:0.92em;font-weight:600;"><i class="fa fa-tag"></i> {{ event.Category|default('Other') }}</span>
+                            <span style="background:#e3f2fd;color:#1976d2;padding:2px 10px;border-radius:12px;font-size:0.92em;"><i class="fa fa-map-marker-alt"></i> {{ event.Place|default('Unknown') }}</span>
+                        </div>
+                        <p><i class="fa fa-calendar"></i> {% if event.Date %}{{ event.Date.strftime('%b %d, %Y') if event.Date.__class__.__name__ == 'datetime' else event.Date|default('') }}{% else %}N/A{% endif %}</p>
+                        <p><i class="fa fa-clock"></i> {% if event.Date %}{{ event.Date.strftime('%I:%M %p') if event.Date.__class__.__name__ == 'datetime' else '' }}{% else %}N/A{% endif %}</p>
+                        <p><i class="fa fa-road"></i> {{ event.Distance|default('N/A') }} km from {{ event.Checkpoint|default('N/A') }}</p>
+                        <p><i class="fa fa-location-dot"></i> Location: {{ event.Location if event.Location else 'N/A' }}</p>
+                        {% if current_user.is_authenticated and (event.hosted_by == current_user.username or (current_user.username == 'Admin' and current_user.email == 'eventure39@gmail.com')) %}
+                        <div style="margin-top:10px;display:flex;gap:8px;">
+                            <a href="{{ url_for('edit_event', event_id=event._id) }}" class="btn" style="background:#1976d2;">Edit</a>
+                            <form method="POST" action="{{ url_for('delete_event', event_id=event._id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                <button type="submit" class="btn" style="background:#f44336;">Delete</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- 1. Add modal HTML at the end of body -->
+    <div id="event-modal" class="modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+      <div class="modal-content" style="background:#fff;padding:32px 24px;border-radius:10px;width:400px;height:520px;max-width:90vw;max-height:90vh;position:relative;display:flex;flex-direction:column;align-items:center;overflow:hidden;">
+        <span id="close-modal" style="position:absolute;top:10px;right:18px;font-size:1.5em;cursor:pointer;">&times;</span>
+        <div id="modal-event-image" style="width:100%;height:180px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:12px;"></div>
+        <h2 id="modal-event-name" style="margin:0 0 8px 0;"></h2>
+        <p id="modal-event-date"></p>
+        <p id="modal-event-place"></p>
+        <p id="modal-event-distance"></p>
+        <p id="modal-event-category"></p>
+        <p id="modal-event-landmark"></p>
+        <form id="modal-book-form" method="POST" style="margin-top:auto;width:100%;">
+          <label for="num_tickets" style="display:block;text-align:left;margin-bottom:6px;">Number of Tickets</label>
+          <input type="number" id="num_tickets" name="num_tickets" min="1" max="10" value="1" required style="width:100%;margin-bottom:14px;">
+          <button type="submit" class="btn" style="width:100%;">Book Ticket</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <footer>
+        <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="font-size:1.1em;font-weight:600;letter-spacing:1px;">Eventure</div>
+            <div style="font-size:0.98em;">&copy; 2024 Eventure. All rights reserved.</div>
+            <div style="font-size:1.3em;">
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Modal logic
+    const modal = document.getElementById('event-modal');
+    const closeModal = document.getElementById('close-modal');
+    closeModal.onclick = () => { modal.style.display = 'none'; };
+    window.onclick = function(event) { if (event.target == modal) { modal.style.display = 'none'; } };
+
+    function showEventModal(eventData) {
+      document.getElementById('modal-event-name').textContent = eventData.Name;
+      document.getElementById('modal-event-date').textContent = 'Date: ' + eventData.Date;
+      document.getElementById('modal-event-place').textContent = 'Place: ' + eventData.Place;
+      document.getElementById('modal-event-distance').textContent = 'Distance: ' + eventData.Distance + ' km';
+      document.getElementById('modal-event-category').textContent = 'Category: ' + eventData.Category;
+      document.getElementById('modal-event-landmark').textContent = 'Landmark: ' + eventData.Checkpoint;
+      if(eventData.image) {
+        document.getElementById('modal-event-image').innerHTML = `<img src='/static/images/${eventData.image}' alt='Event Image' style='width:100%;height:100%;object-fit:cover;border-radius:7px;'>`;
+      } else {
+        document.getElementById('modal-event-image').innerHTML = '';
+      }
+      // Set form action
+      document.getElementById('modal-book-form').action = `/book_ticket/${eventData._id}`;
+      modal.style.display = 'flex';
+    }
+
+    // Attach click handlers to event cards
+    window.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.event-card').forEach(function(card) {
+        card.style.cursor = 'pointer';
+        card.onclick = function() {
+          const eventData = JSON.parse(this.getAttribute('data-event'));
+          showEventModal(eventData);
+        };
+      });
+    });
+    </script>
+    <script>
+    // Robust dark mode toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const darkToggleBtn = document.getElementById('dark-mode-toggle');
+        function setDarkMode(on) {
+            if (on) {
+                document.body.classList.add('dark-mode');
+                darkToggleBtn.textContent = '☀️ Light Mode';
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkToggleBtn.textContent = '🌙 Dark Mode';
+            }
+        }
+        const darkPref = localStorage.getItem('darkMode') === 'true';
+        setDarkMode(darkPref);
+        darkToggleBtn.onclick = function() {
+            const isDark = !document.body.classList.contains('dark-mode');
+            setDarkMode(isDark);
+            localStorage.setItem('darkMode', isDark);
+        };
+    });
+    </script>
+</body>
+</html>

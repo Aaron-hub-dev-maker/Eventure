@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .confirmation-hero {
+            background: linear-gradient(90deg, #4CAF50 60%, #00bcd4 100%);
+            color: #fff;
+            padding: 44px 0 32px 0;
+            text-align: center;
+        }
+        .confirmation-container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 8px;
+            padding: 32px 28px 24px 28px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .confirmation-container h2 {
+            color: #4CAF50;
+            margin-bottom: 18px;
+            font-size: 1.6em;
+        }
+        .confirmation-container p {
+            font-size: 1.1em;
+            color: #333;
+        }
+        .confirmation-container .btn {
+            margin-top: 24px;
+            background: #00bcd4;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .confirmation-container .btn:hover {
+            background: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container">
+        <header>
+            <h2 style="font-size:2em;display:flex;align-items:center;gap:8px;">
+                <i class="fa-solid fa-calendar-days" style="color:#4CAF50;"></i>
+                <span class="eventure-logo-text">Eventure</span>
+            </h2>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/host">Host an Event</a>
+                <a href="/referrals">Referrals</a>
+                <a href="/FAQ">FAQ</a>
+                <a href="/contact">Contact</a>
+            </nav>
+            <button id="dark-mode-toggle" style="margin-left:18px;padding:6px 16px;border-radius:20px;border:none;background:#23272a;color:#fff;cursor:pointer;font-weight:600;">🌙 Dark Mode</button>
+            {% if current_user.is_authenticated %}
+                <span style="margin-left:18px;font-weight:600;color:#4CAF50;">Welcome, {{ current_user.username }}!</span>
+                <a href="/logout" class="btn" style="margin-left:12px;background:#f44336;">Logout</a>
+            {% else %}
+                <a href="/login" class="btn" style="margin-left:18px;">Login</a>
+                <a href="/register" class="btn" style="margin-left:8px;background:#00bcd4;">Register</a>
+            {% endif %}
+        </header>
+    </div>
+
+    <section class="confirmation-hero">
+        <h1 style="font-size:2.2em;font-weight:700;margin-bottom:10px;">Thank You!</h1>
+        <p style="font-size:1.15em;max-width:500px;margin:0 auto;">We have received your message and will get back to you soon.</p>
+    </section>
+
+    <div class="confirmation-container">
+        <h2><i class="fa fa-check-circle" style="color:#4CAF50;"></i> Message Sent</h2>
+        <p>Thank you for contacting us!<br>Your message has been received by our team.</p>
+        <a href="/" class="btn">Back to Home</a>
+    </div>
+
+    <footer>
+        <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="font-size:1.1em;font-weight:600;letter-spacing:1px;">Eventure</div>
+            <div style="font-size:0.98em;">&copy; 2024 Eventure. All rights reserved.</div>
+            <div style="font-size:1.3em;">
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script>
+// Robust dark mode toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const darkToggleBtn = document.getElementById('dark-mode-toggle');
+        function setDarkMode(on) {
+            if (on) {
+                document.body.classList.add('dark-mode');
+                darkToggleBtn.textContent = '☀️ Light Mode';
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkToggleBtn.textContent = '🌙 Dark Mode';
+            }
+        }
+        const darkPref = localStorage.getItem('darkMode') === 'true';
+        setDarkMode(darkPref);
+        darkToggleBtn.onclick = function() {
+            const isDark = !document.body.classList.contains('dark-mode');
+            setDarkMode(isDark);
+            localStorage.setItem('darkMode', isDark);
+        };
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .host-hero { background: linear-gradient(90deg, #1976d2 60%, #00bcd4 100%); color: #fff; padding: 44px 0 32px 0; text-align: center; }
+        .host-form-container { max-width: 480px; margin: 0 auto 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); padding: 32px 28px 24px 28px; }
+        body.dark-mode .host-form-container { background: var(--white) !important; color: var(--text) !important; }
+        .host-form-container h2 { color: #1976d2; margin-bottom: 18px; font-size: 1.6em; }
+        body.dark-mode .host-form-container h2 { color: #b6d2f5 !important; }
+    </style>
+</head>
+<body>
+    <div id="header-container">
+        <header>
+            <h2 style="font-size:2em;display:flex;align-items:center;gap:8px;">
+                <i class="fa-solid fa-calendar-days" style="color:#1976d2;"></i>
+                <span class="eventure-logo-text">Eventure</span>
+            </h2>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/host">Host an Event</a>
+                <a href="/referrals">Referrals</a>
+                <a href="/FAQ">FAQ</a>
+                <a href="/contact">Contact</a>
+            </nav>
+            <button id="dark-mode-toggle" style="margin-left:18px;padding:6px 16px;border-radius:20px;border:none;background:#23272a;color:#fff;cursor:pointer;font-weight:600;">🌙 Dark Mode</button>
+            {% if current_user.is_authenticated %}
+                <span style="margin-left:18px;font-weight:600;color:#1976d2;">Welcome, {{ current_user.username }}!</span>
+                <a href="/logout" class="btn" style="margin-left:12px;background:#f44336;">Logout</a>
+            {% else %}
+                <a href="/login" class="btn" style="margin-left:18px;">Login</a>
+                <a href="/register" class="btn" style="margin-left:8px;background:#00bcd4;">Register</a>
+            {% endif %}
+        </header>
+    </div>
+
+    <section class="host-hero">
+        <h1 style="font-size:2.2em;font-weight:700;margin-bottom:10px;">Edit Event</h1>
+        <p style="font-size:1.15em;max-width:500px;margin:0 auto;">Update your event details below and save your changes.</p>
+    </section>
+
+    <div class="host-form-container">
+        <h2><i class="fa fa-edit"></i> Edit Event Details</h2>
+        <form id="eventForm" method="POST" action="" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="name">Event Name</label>
+                <input type="text" name="name" id="name" required value="{{ event.Name }}">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="category">Category</label>
+                <select name="category" id="category" required>
+                    <option value="Party" {% if event.Category == 'Party' %}selected{% endif %}>Party</option>
+                    <option value="Concerts" {% if event.Category == 'Concerts' %}selected{% endif %}>Concerts</option>
+                    <option value="Open Mic" {% if event.Category == 'Open Mic' %}selected{% endif %}>Open Mic</option>
+                    <option value="Stand Up" {% if event.Category == 'Stand Up' %}selected{% endif %}>Stand Up</option>
+                    <option value="Other" {% if event.Category == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:6px;">
+                    <label for="date">Date</label>
+                    <input type="date" name="date" id="date" required value="{{ event.Date.strftime('%Y-%m-%d') if event.Date.__class__.__name__ == 'datetime' else event.Date }}">
+                </div>
+                <div style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:6px;">
+                    <label for="time">Time</label>
+                    <input type="time" name="time" id="time" required value="{{ event.Date.strftime('%H:%M') if event.Date.__class__.__name__ == 'datetime' else '' }}">
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:6px;">
+                    <label for="place">Place</label>
+                    <select name="place" id="place" required>
+                        <option value="Kochi" {% if event.Place == 'Kochi' %}selected{% endif %}>Kochi</option>
+                        <option value="Bangalore" {% if event.Place == 'Bangalore' %}selected{% endif %}>Bangalore</option>
+                        <option value="Mumbai" {% if event.Place == 'Mumbai' %}selected{% endif %}>Mumbai</option>
+                        <option value="Delhi" {% if event.Place == 'Delhi' %}selected{% endif %}>Delhi</option>
+                    </select>
+                </div>
+                <div style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:6px;">
+                    <label for="checkpoint">Landmark</label>
+                    <input type="text" name="checkpoint" id="landmark" value="{{ event.Checkpoint }}">
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="distance">Distance from Landmark (in km)</label>
+                <input type="number" name="distance" id="distance" required value="{{ event.Distance }}">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="location">Location (admin only)</label>
+                {% if current_user.is_authenticated and current_user.username == 'Admin' and current_user.email == 'eventure39@gmail.com' %}
+                <input type="text" name="location" id="location" value="{{ event.Location if event.Location else '' }}">
+                {% else %}
+                <input type="text" name="location" id="location" value="{{ event.Location if event.Location else '' }}" readonly style="background:#f5f5f5;">
+                {% endif %}
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="image">Event Image (optional)</label>
+                <input type="file" name="image" id="image" accept="image/*">
+                {% if event.image %}
+                <div style="margin-top:8px;">
+                    <img src="{{ url_for('static', filename='images/' ~ event.image) }}" alt="Current Event Image" style="max-width:100%;height:80px;object-fit:cover;border-radius:6px;">
+                    <span style="font-size:0.95em;color:#888;">Current image</span>
+                </div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn" style="width:100%;margin-top:10px;">Save Changes</button>
+        </form>
+    </div>
+
+    <footer>
+        <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="font-size:1.1em;font-weight:600;letter-spacing:1px;">Eventure</div>
+            <div style="font-size:0.98em;">&copy; 2024 Eventure. All rights reserved.</div>
+            <div style="font-size:1.3em;">
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Robust dark mode toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkToggleBtn = document.getElementById('dark-mode-toggle');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    darkToggleBtn.textContent = '☀️ Light Mode';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    darkToggleBtn.textContent = '🌙 Dark Mode';
+                }
+            }
+            const darkPref = localStorage.getItem('darkMode') === 'true';
+            setDarkMode(darkPref);
+            darkToggleBtn.onclick = function() {
+                const isDark = !document.body.classList.contains('dark-mode');
+                setDarkMode(isDark);
+                localStorage.setItem('darkMode', isDark);
+            };
+        });
+    </script>
+</body>
+</html> 

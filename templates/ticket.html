@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Event Ticket | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #4CAF50 60%, #00bcd4 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ticket-outer {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            max-width: 420px;
+            width: 100%;
+            margin: 40px auto;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .ticket-header {
+            background: linear-gradient(90deg, #4CAF50 60%, #00bcd4 100%);
+            color: #fff;
+            padding: 28px 0 18px 0;
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .ticket-stub {
+            position: absolute;
+            left: -18px;
+            top: 60px;
+            width: 36px;
+            height: 36px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 2;
+        }
+        .ticket-stub.right {
+            left: auto;
+            right: -18px;
+        }
+        .ticket-details {
+            padding: 28px 32px 12px 32px;
+            text-align: left;
+        }
+        .ticket-details p {
+            margin: 8px 0;
+            font-size: 1.08em;
+        }
+        .ticket-details strong {
+            color: #4CAF50;
+        }
+        .ticket-qr {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 18px 0 24px 0;
+        }
+        .ticket-qr img {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            background: #f7f7f7;
+            padding: 8px;
+        }
+        .ticket-footer {
+            background: #f7f7f7;
+            padding: 16px 0;
+            text-align: center;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            font-size: 1.05em;
+            color: #888;
+        }
+        .event-icon {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket-outer">
+        <div class="ticket-header">
+            <h2 style="font-size:2em;display:flex;align-items:center;gap:8px;">
+                <i class="fa-solid fa-calendar-days" style="color:#4CAF50;"></i>
+                <span class="eventure-logo-text">Eventure</span>
+            </h2>
+            <div class="ticket-stub"></div>
+            <div class="ticket-stub right"></div>
+        </div>
+        <div class="ticket-details">
+            <p><strong>Event:</strong> {{ event.Name }}</p>
+            <p><strong>Date:</strong> {% if event.Date %}{{ event.Date.strftime('%b %d, %Y %I:%M %p') if event.Date.__class__.__name__ == 'datetime' else event.Date }}{% endif %}</p>
+            <p><strong>Place:</strong> {{ event.Place }}</p>
+            <p><strong>Category:</strong> {{ event.Category }}</p>
+            <p><strong>Landmark:</strong> {{ event.Checkpoint }}</p>
+            <p><strong>Distance:</strong> {{ event.Distance }} km</p>
+            <p><strong>Number of Tickets:</strong> {{ booking.num_tickets }}</p>
+            <p><strong>Booking ID:</strong> {{ booking._id }}</p>
+        </div>
+        <div class="ticket-qr">
+            {% if qr_filename %}
+                <img src="{{ url_for('static', filename='images/' + qr_filename) }}" alt="QR Code" style="width:160px;height:160px;">
+            {% else %}
+                <img src="{{ url_for('static', filename='images/qr_placeholder.png') }}" alt="QR Code" style="width:160px;height:160px;">
+            {% endif %}
+        </div>
+        <div class="ticket-footer">
+            Enjoy your event!<br>
+            &copy; 2024 Eventure
+        </div>
+    </div>
+    <script>
+    // Robust dark mode toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkToggleBtn = document.getElementById('dark-mode-toggle');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    darkToggleBtn.textContent = '☀️ Light Mode';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    darkToggleBtn.textContent = '🌙 Dark Mode';
+                }
+            }
+            const darkPref = localStorage.getItem('darkMode') === 'true';
+            setDarkMode(darkPref);
+            darkToggleBtn.onclick = function() {
+                const isDark = !document.body.classList.contains('dark-mode');
+                setDarkMode(isDark);
+                localStorage.setItem('darkMode', isDark);
+            };
+        });
+    </script>
+</body>
+</html> 

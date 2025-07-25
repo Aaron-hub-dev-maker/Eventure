@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Host an Event | Eventure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .host-hero {
+            background: linear-gradient(90deg, #4CAF50 60%, #00bcd4 100%);
+            color: #fff;
+            padding: 44px 0 32px 0;
+            text-align: center;
+        }
+        .host-form-container {
+            max-width: 480px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 32px 28px 24px 28px;
+        }
+        body.dark-mode .host-form-container {
+            background: var(--white) !important;
+            color: var(--text) !important;
+        }
+        .host-form-container h2 {
+            color: #4CAF50;
+            margin-bottom: 18px;
+            font-size: 1.6em;
+        }
+        body.dark-mode .host-form-container h2 {
+            color: #b6f5c2 !important;
+        }
+        .confirmation-box {
+            background: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            color: #222;
+            border-radius: 6px;
+            padding: 18px 16px;
+            margin: 18px 0;
+            text-align: left;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.08em;
+        }
+        body.dark-mode .confirmation-box {
+            background: #223b2a !important;
+            color: #b6f5c2 !important;
+            border-left: 5px solid #4CAF50 !important;
+        }
+        .host-form-container label {
+            color: #222;
+        }
+        body.dark-mode .host-form-container label {
+            color: var(--text) !important;
+        }
+        .confirmation-box button {
+            margin-right: 10px;
+        }
+        .cancel-btn {
+            background: #f44336;
+            color: #fff;
+        }
+        .cancel-btn:hover {
+            background: #b71c1c;
+        }
+    </style>
+    <script>
+        function updateLandmark() {
+            const place = document.getElementById('place').value;
+            const landmarkField = document.getElementById('landmark');
+            const landmarks = {
+                "Kochi": "Lulu Mall",
+                "Bangalore": "Cubbon Park",
+                "Mumbai": "Marine Drive",
+                "Delhi": "India Gate"
+            };
+            landmarkField.value = landmarks[place] || "";
+        }
+        function showConfirmation(event) {
+            event.preventDefault();
+            const eventName = document.getElementById('name').value;
+            const category = document.getElementById('category').value;
+            const place = document.getElementById('place').value;
+            const distance = document.getElementById('distance').value;
+            const confirmationBox = document.getElementById('confirmation-box');
+            confirmationBox.innerHTML = `
+                <p><strong>Event Name:</strong> ${eventName}</p>
+                <p><strong>Category:</strong> ${category}</p>
+                <p><strong>Place:</strong> ${place}</p>
+                <p><strong>Distance from Landmark:</strong> ${distance} km</p>
+                <button class="btn" onclick="document.getElementById('eventForm').submit()">Confirm</button>
+                <button type="button" onclick="hideConfirmation()" class="btn cancel-btn">Cancel</button>
+            `;
+            confirmationBox.style.display = 'block';
+        }
+        function hideConfirmation() {
+            document.getElementById('confirmation-box').style.display = 'none';
+        }
+        document.addEventListener('DOMContentLoaded', updateLandmark);
+    </script>
+</head>
+<body>
+    <div id="header-container">
+        <header>
+            <h2 style="font-size:2em;display:flex;align-items:center;gap:8px;">
+                <i class="fa-solid fa-calendar-days" style="color:#4CAF50;"></i>
+                <span class="eventure-logo-text">Eventure</span>
+            </h2>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/host">Host an Event</a>
+                <a href="/referrals">Referrals</a>
+                <a href="/FAQ">FAQ</a>
+                <a href="/contact">Contact</a>
+            </nav>
+            <button id="dark-mode-toggle" style="margin-left:18px;padding:6px 16px;border-radius:20px;border:none;background:#23272a;color:#fff;cursor:pointer;font-weight:600;">🌙 Dark Mode</button>
+            {% if current_user.is_authenticated %}
+                <span style="margin-left:18px;font-weight:600;color:#4CAF50;">Welcome, {{ current_user.username }}!</span>
+                <a href="/logout" class="btn" style="margin-left:12px;background:#f44336;">Logout</a>
+            {% else %}
+                <a href="/login" class="btn" style="margin-left:18px;">Login</a>
+                <a href="/register" class="btn" style="margin-left:8px;background:#00bcd4;">Register</a>
+            {% endif %}
+        </header>
+    </div>
+
+    <section class="host-hero">
+        <h1 style="font-size:2.2em;font-weight:700;margin-bottom:10px;">Host Your Own Event</h1>
+        <p style="font-size:1.15em;max-width:500px;margin:0 auto;">Share your passion, bring people together, and create unforgettable experiences. Fill out the form below to get started!</p>
+    </section>
+
+    <div class="host-form-container">
+        <h2><i class="fa fa-plus-circle"></i> Event Details</h2>
+        <form id="eventForm" method="POST" action="/host" onsubmit="showConfirmation(event)" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="name">Event Name</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="category">Category</label>
+                <select name="category" id="category" required>
+                    <option value="Party">Party</option>
+                    <option value="Concerts">Concerts</option>
+                    <option value="Open Mic">Open Mic</option>
+                    <option value="Stand Up">Stand Up</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:6px;">
+                    <label for="date">Date</label>
+                    <input type="date" name="date" id="date" required>
+                </div>
+                <div style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:6px;">
+                    <label for="time">Time</label>
+                    <input type="time" name="time" id="time" required>
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:6px;">
+                    <label for="place">Place</label>
+                    <select name="place" id="place" onchange="updateLandmark()" required>
+                        <option value="Kochi">Kochi</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Delhi">Delhi</option>
+                    </select>
+                </div>
+                <div style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:6px;">
+                    <label for="checkpoint">Landmark</label>
+                    <input type="text" name="checkpoint" id="landmark">
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="distance">Distance from Landmark (in km)</label>
+                <input type="number" name="distance" id="distance" required>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="location">Location</label>
+                <input type="text" name="location" id="location" placeholder="Enter event location (optional)">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <label for="image">Event Image (optional)</label>
+                <input type="file" name="image" id="image" accept="image/*">
+            </div>
+            <button type="submit" class="btn" style="width:100%;margin-top:10px;">Submit</button>
+        </form>
+        <div id="confirmation-box" class="confirmation-box" style="display: none;"></div>
+    </div>
+
+    <footer>
+        <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="font-size:1.1em;font-weight:600;letter-spacing:1px;">Eventure</div>
+            <div style="font-size:0.98em;">&copy; 2024 Eventure. All rights reserved.</div>
+            <div style="font-size:1.3em;">
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="color:#fff;margin:0 8px;"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Robust dark mode toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkToggleBtn = document.getElementById('dark-mode-toggle');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    darkToggleBtn.textContent = '☀️ Light Mode';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    darkToggleBtn.textContent = '🌙 Dark Mode';
+                }
+            }
+            const darkPref = localStorage.getItem('darkMode') === 'true';
+            setDarkMode(darkPref);
+            darkToggleBtn.onclick = function() {
+                const isDark = !document.body.classList.contains('dark-mode');
+                setDarkMode(isDark);
+                localStorage.setItem('darkMode', isDark);
+            };
+        });
+    </script>
+</body>
+</html>

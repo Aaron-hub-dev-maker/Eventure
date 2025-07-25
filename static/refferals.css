@@ -1,0 +1,137 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f5f7; /* Light background for the whole page */
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 18px;
+    color: #666;
+    margin-top: 0;
+}
+
+/* Referral Information Section */
+.referral-info {
+    background-color: #fff;
+    padding: 40px 20px;
+    margin-top: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.referral-info h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.referral-info p {
+    font-size: 16px;
+    color: #666;
+}
+
+.referral-info ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    font-size: 16px;
+    color: #666;
+}
+
+/* Current Programs Section */
+.current-programs {
+    background-color: #f9f9f9;
+    padding: 40px 20px;
+    margin-top: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.current-programs h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.current-programs p {
+    font-size: 16px;
+    color: #666;
+}
+
+/* Call to Action Section */
+.cta {
+    text-align: center;
+    padding: 40px 20px;
+    margin-top: 30px;
+}
+
+.cta h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.cta .btn {
+    padding: 12px 30px;
+    font-size: 18px;
+    color: #fff;
+    background-color: #333;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.cta .btn:hover {
+    background-color: #555;
+}
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+footer p {
+    font-size: 14px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 28px;
+    }
+    .referral-info, .current-programs, .cta {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 24px;
+    }
+    .referral-info h2, .current-programs h2, .cta h2 {
+        font-size: 24px;
+    }
+    .cta .btn {
+        padding: 10px 25px;
+        font-size: 16px;
+    }
+}
