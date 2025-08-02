@@ -1,4 +1,4 @@
-# Event Finder
+# Eventure
 
 Event Finder is a web application that allows users to discover, host, and book events with ease. Built using Python, Flask, and MongoDB, it features secure user authentication, event hosting with OTP verification, ticket booking with QR code generation, and email notifications.
 
